@@ -39,8 +39,8 @@ class Wordpress_Widget_Githubrepos extends WP_Widget {
         foreach($data as $repo)
         {
             echo "<li>";
-            echo "<a href=\"".$repo['html_url']."\">".$repo['name']."</a>";
-            echo "<p>" . $repo['description'] . "</p>";
+            echo "<p><a href=\"".$repo['html_url']."\">".$repo['name']."</a><br>";
+            echo $repo['description'] . "</p>";
             echo "</li>";
         }
         echo "</ul>";
