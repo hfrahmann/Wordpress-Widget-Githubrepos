@@ -33,7 +33,9 @@ class Wordpress_Widget_Githubrepos extends WP_Widget {
         echo $before_widget;
         echo $before_title . $title . $after_title;
 
-        $data = $this->getGithubData($username, $limit);
+        $data = $this->getGithubData($username);
+
+        $count = 0;
 
         echo "<ul>";
         foreach($data as $repo)
@@ -42,6 +44,14 @@ class Wordpress_Widget_Githubrepos extends WP_Widget {
             echo "<p><a href=\"".$repo['html_url']."\">".$repo['name']."</a><br>";
             echo $repo['description'] . "</p>";
             echo "</li>";
+
+
+            if($limit > 0)
+            {
+                $count++;
+                if($count == $limit)
+                    break;
+            }
         }
         echo "</ul>";
 
@@ -67,10 +77,9 @@ class Wordpress_Widget_Githubrepos extends WP_Widget {
 
     /**
      * @param string $username
-     * @param int $limit
      * @return array
      */
-    protected function getGithubData($username, $limit = 0)
+    protected function getGithubData($username)
     {
         $transient = "Githubrepos_" . $username;
 
@@ -84,7 +93,7 @@ class Wordpress_Widget_Githubrepos extends WP_Widget {
             if($jsonData == null)
                 $jsonData = array();
 
-            $result = $this->parseGithubData($jsonData, $limit);
+            $result = $this->parseGithubData($jsonData);
 
             set_transient( $transient, $result, 60*30 ); // 30 min.
         }
@@ -93,13 +102,10 @@ class Wordpress_Widget_Githubrepos extends WP_Widget {
 
     /**
      * @param array $data
-     * @param int $limit
      * @return array
      */
-    protected function parseGithubData(array $data, $limit)
+    protected function parseGithubData(array $data)
     {
-        $count = 0;
-
         $newData = array();
         foreach($data as $repo)
         {
@@ -109,13 +115,6 @@ class Wordpress_Widget_Githubrepos extends WP_Widget {
                 'html_url' => $repo['html_url'],
                 'description' => $repo['description'],
             );
-
-            if($limit > 0)
-            {
-                $count++;
-                if($count == $limit)
-                    break;
-            }
         }
         return $newData;
     }
