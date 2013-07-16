@@ -87,7 +87,7 @@ class Wordpress_Widget_Githubrepos extends WP_Widget {
 
         if($result == false || $result == null)
         {
-            $jsonString = file_get_contents("http://api.github.com/users/".urlencode($username)."/repos?sort=updated&direction=desc");
+            $jsonString = file_get_contents("https://api.github.com/users/".urlencode($username)."/repos?sort=updated&direction=desc");
 
             $jsonData = json_decode($jsonString, true);
             if($jsonData == null)
