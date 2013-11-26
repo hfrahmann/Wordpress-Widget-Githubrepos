@@ -87,7 +87,22 @@ class Wordpress_Widget_Githubrepos extends WP_Widget {
 
         if($result == false || $result == null)
         {
-            $jsonString = file_get_contents("https://api.github.com/users/".urlencode($username)."/repos?sort=updated&direction=desc");
+            $githubUrl = "https://api.github.com/users/".urlencode($username)."/repos?sort=updated&direction=desc";
+
+            $curlSession = curl_init();
+            curl_setopt($curlSession, CURLOPT_URL, $githubUrl);
+            curl_setopt($curlSession, CURLOPT_BINARYTRANSFER, true);
+            curl_setopt($curlSession, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curlSession, CURLOPT_HTTPHEADER, array(
+                'User-Agent: Wordpress-Plugin'
+            ));
+
+
+            $jsonString = curl_exec($curlSession);
+            curl_close($curlSession);
+
+           if($jsonString == FALSE)
+               $jsonString = "";
 
             $jsonData = json_decode($jsonString, true);
             if($jsonData == null)
